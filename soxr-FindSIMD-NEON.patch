@@ -1,0 +1,25 @@
+--- soxr-0.1.1-Source/cmake/Modules/FindSIMD.cmake~	2013-01-12 14:05:42.000000000 +0000
++++ soxr-0.1.1-Source/cmake/Modules/FindSIMD.cmake	2014-04-28 15:13:22.374481813 +0100
+@@ -51,15 +51,15 @@
+ 
+ set (SIMD_C_TEST_SOURCE
+ "
+-#include <xmmintrin.h>
++// #include <xmmintrin.h>
+ int main()
+ {
+-  __m128 a, b;
+-  float vals[4] = {0};
+-  a = _mm_loadu_ps (vals);
+-  b = a;
+-  b = _mm_add_ps (a,b);
+-  _mm_storeu_ps (vals,b);
++//  __m128 a, b;
++//  float vals[4] = {0};
++//  a = _mm_loadu_ps (vals);
++//  b = a;
++//  b = _mm_add_ps (a,b);
++//  _mm_storeu_ps (vals,b);
+   return 0;
+ }
+ ")

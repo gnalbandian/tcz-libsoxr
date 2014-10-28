@@ -1,0 +1,98 @@
+Only in soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/: dist
+diff -ur soxr-0.1.1-Source/examples/2-stream.C soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/2-stream.C
+--- soxr-0.1.1-Source/examples/2-stream.C	2013-01-21 15:15:48.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/2-stream.C	2013-05-27 20:07:14.000000000 +0100
+@@ -72,7 +72,7 @@
+   soxr_delete(soxr);
+   free(obuf), free(ibuf);
+                                                               /* Diagnostics: */
+-  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0],
+-      soxr_strerror(error), errno? strerror(errno) : "no error");
+-  return error || errno;
++  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0], soxr_strerror(error),
++      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
++  return !!error;
+ }
+diff -ur soxr-0.1.1-Source/examples/3-options-input-fn.c soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/3-options-input-fn.c
+--- soxr-0.1.1-Source/examples/3-options-input-fn.c	2013-02-27 21:18:14.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/3-options-input-fn.c	2013-05-27 20:07:14.000000000 +0100
+@@ -104,7 +104,8 @@
+   soxr_delete(soxr);
+   free(obuf), free(ibuf);
+                                                               /* Diagnostics: */
+-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n", arg0, soxr_strerror(error),
+-      (long unsigned)clips, errno? strerror(errno) : "no error");
+-  return error || errno;
++  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n",
++      arg0, soxr_strerror(error), (long unsigned)clips,
++      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
++  return !!error;
+ }
+diff -ur soxr-0.1.1-Source/examples/4-split-channels.c soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/4-split-channels.c
+--- soxr-0.1.1-Source/examples/4-split-channels.c	2013-01-12 14:00:02.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/4-split-channels.c	2013-05-27 20:07:14.000000000 +0100
+@@ -141,7 +141,8 @@
+   free(obuf), free(ibuf), free(obufs), free(ibufs);
+   free(obuf_ptrs), free(ibuf_ptrs);
+                                                               /* Diagnostics: */
+-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n", arg0, soxr_strerror(error),
+-      (long unsigned)clips, errno? strerror(errno) : "no error");
+-  return error || errno;
++  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n",
++      arg0, soxr_strerror(error), (long unsigned)clips,
++      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
++  return !!error;
+ }
+diff -ur soxr-0.1.1-Source/examples/5-variable-rate.c soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/5-variable-rate.c
+--- soxr-0.1.1-Source/examples/5-variable-rate.c	2013-01-12 14:00:02.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/examples/5-variable-rate.c	2013-05-27 20:07:14.000000000 +0100
+@@ -88,7 +88,7 @@
+     soxr_delete(soxr);
+   }
+                                                               /* Diagnostics: */
+-  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0],
+-      soxr_strerror(error), errno? strerror(errno) : "no error");
+-  return error || errno;
++  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0], soxr_strerror(error),
++      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
++  return !!error;
+ }
+Only in soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/: .gitignore
+diff -ur soxr-0.1.1-Source/inst-check-soxr soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/inst-check-soxr
+--- soxr-0.1.1-Source/inst-check-soxr	2013-03-02 09:36:57.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/inst-check-soxr	2013-05-27 20:07:14.000000000 +0100
+@@ -29,7 +29,7 @@
+   for f in ?$2-*.[cC]; do
+     cc=cc; echo $f | grep -q C$ && cc=c++
+     out=$tmp/`echo $f | sed "s/.[cC]$//"`
+-    cmd="$cc $cflags -o $out $f $libs"
++    cmd="$cc $cflags -o $out $f $libs -lm"
+     echo $cmd; $cmd
+   done
+ }
+diff -ur soxr-0.1.1-Source/src/soxr.c soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/src/soxr.c
+--- soxr-0.1.1-Source/src/soxr.c	2013-02-27 21:19:41.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/src/soxr.c	2013-05-27 20:07:14.000000000 +0100
+@@ -85,7 +85,7 @@
+     quality = 6;
+   else if (quality > 10)
+     quality = 0;
+-  p->phase_response = "\62\31\144"[(recipe & 0x30)>>8];
++  p->phase_response = "\62\31\144"[(recipe & 0x30) >> 4];
+   p->stopband_begin = 1;
+   p->precision = !quality? 0: quality < 3? 16 : quality < 8? 4 + quality * 4 : 55 - quality * 4;
+   rej = p->precision * linear_to_dB(2.);
+diff -ur soxr-0.1.1-Source/src/soxr.h soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/src/soxr.h
+--- soxr-0.1.1-Source/src/soxr.h	2013-03-02 09:10:14.000000000 +0000
++++ soxr-code-988f8303c7f30d0db5db3e15bf973e2bdf5c867e/src/soxr.h	2013-05-27 20:07:14.000000000 +0100
+@@ -259,8 +259,8 @@
+ };
+                                    /* For `irrational' ratios only: */
+ #define SOXR_COEF_INTERP_AUTO  0u    /* Auto select coef. interpolation. */
+-#define SOXR_COEF_INTERP_LOW   1u    /* Man. select: less CPU, more memory. */
+-#define SOXR_COEF_INTERP_HIGH  2u    /* Man. select: more CPU, less memory. */
++#define SOXR_COEF_INTERP_LOW   2u    /* Man. select: less CPU, more memory. */
++#define SOXR_COEF_INTERP_HIGH  3u    /* Man. select: more CPU, less memory. */
+ 
+ #define SOXR_STRICT_BUFFERING  4u  /* Reserved for future use. */
+ #define SOXR_NOSMALLINTOPT     8u  /* For test purposes only. */
